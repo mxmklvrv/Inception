@@ -1,0 +1,4 @@
+services:
+  test:
+    build: ./requirements/test
+    container_name: test_container
