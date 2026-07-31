@@ -1,4 +1,35 @@
 services:
-  test:
-    build: ./requirements/test
-    container_name: test_container
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    image: mariadb:inception
+
+    env_file:
+      - .env
+
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_HOST: ${MYSQL_HOST}
+
+    volumes:
+      - mariadb:/var/lib/mysql
+
+    networks:
+      - inception
+
+    restart: unless-stopped
+
+volumes:
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME}/data/mariadb
+
+networks:
+  inception:
+    driver: bridge

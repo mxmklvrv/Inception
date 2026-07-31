@@ -1,0 +1,6 @@
+# Environment variables
+srcs/.env
+
+# Docker secrets
+secrets/
+
