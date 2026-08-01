@@ -10,9 +10,11 @@ services:
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_HOST: ${MYSQL_HOST}
+
+    secrets:
+      - db_root_password
+      - db_password
 
     volumes:
       - mariadb:/var/lib/mysql
@@ -33,3 +35,9 @@ volumes:
 networks:
   inception:
     driver: bridge
+
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
