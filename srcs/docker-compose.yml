@@ -25,37 +25,31 @@ services:
     restart: unless-stopped
 
   wordpress:
-  build: ./requirements/wordpress
-  image: wordpress:inception
-  container_name: wordpress
+    build: ./requirements/wordpress
+    image: wordpress:inception
+    container_name: wordpress
 
-  env_file:
+    env_file:
     - .env
-
-  environment:
-    WORDPRESS_DB_HOST: mariadb
-    WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
-    WORDPRESS_DB_USER: ${MYSQL_USER}
-    WP_ADMIN_USER: ${WP_ADMIN_USER}
-    WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
-    WP_USER: ${WP_USER}
-    WP_USER_EMAIL: ${WP_USER_EMAIL}
-
-  secrets:
-    - db_password
-    - wp_admin_password
-    - wp_user_password
-
-  depends_on:
-    - mariadb
-
-  volumes:
-    - wordpress:/var/www/html
-
-  networks:
-    - inception
-
-  restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WP_USER: ${WP_USER}
+      WP_USER_EMAIL: ${WP_USER_EMAIL}
+    secrets:
+      - db_password
+      - wp_admin_password
+      - wp_user_password
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - inception
+    restart: unless-stopped
 
 volumes:
   mariadb:

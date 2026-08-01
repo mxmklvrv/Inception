@@ -12,8 +12,8 @@ RUN apk update && apk add \
     curl \
     mariadb-client
 
-COPY tools/setup.sh /setup.sh
+COPY tools/setup.sh /wp_setup.sh
 
-RUN chmod +x /setup.sh
+RUN chmod +x /wp_setup.sh
 
 ENTRYPOINT ["/wp_setup.sh"]
