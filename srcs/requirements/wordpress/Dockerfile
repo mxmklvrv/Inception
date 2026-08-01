@@ -9,10 +9,16 @@ RUN apk update && apk add \
     php84-session \
     php84-iconv \
     php84-mbstring \
+    php84-curl \
+    php84-xml \
+    php84-dom \
+    php84-xmlwriter \
     curl \
     mariadb-client
 
-COPY tools/setup.sh /wp_setup.sh
+RUN mkdir -p /var/www/html
+
+COPY tools/wp_setup.sh /wp_setup.sh
 
 RUN chmod +x /wp_setup.sh
 
