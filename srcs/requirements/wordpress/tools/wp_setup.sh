@@ -12,6 +12,14 @@ echo "Secrets loaded."
 
 mkdir -p /run/php
 
+#cli 
+if [ ! -f /usr/local/bin/wp ]; then
+    echo "Installing WP-CLI..."
+    curl -o /usr/local/bin/wp \
+        https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    chmod +x /usr/local/bin/wp
+fi
+
 echo "Waiting for MariaDB..."
 
 i=0
@@ -35,12 +43,15 @@ if [ "$i" -eq 20 ]; then
     exit 1
 fi
 
-if [ ! -f /usr/local/bin/wp ]; then
-    echo "Installing WP-CLI..."
-    curl -o /usr/local/bin/wp \
-        https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-    chmod +x /usr/local/bin/wp
+cd /var/www/html
+
+if [ ! -f wp-config.php ]; then
+    echo "Downloading WordPress..."
+
+    wp core download --allow-root
 fi
+
+
 
 
 exec php-fpm84 -F

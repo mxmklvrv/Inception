@@ -4,27 +4,21 @@ set -e
 
 echo "Launching MariaDB setup..."
 
-# Load passwords from Docker secrets 
 MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
 MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 
-# Make sure required variables exist
 : "${MYSQL_ROOT_PASSWORD:?Missing root password}"
 : "${MYSQL_DATABASE:?Missing database name}"
 : "${MYSQL_USER:?Missing user name}"
 : "${MYSQL_PASSWORD:?Missing user password}"
 
-mkdir -p /run/mysqld
-mkdir -p /var/lib/mysql
-
+mkdir -p /run/mysqld /var/lib/mysql
 chown -R mysql:mysql /run/mysqld /var/lib/mysql
 
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "Initializing MariaDB..."
 
-    mariadb-install-db \
-        --user=mysql \
-        --datadir=/var/lib/mysql
+    mariadb-install-db --user=mysql --datadir=/var/lib/mysql
 
     echo "Starting temporary MariaDB..."
 
@@ -38,14 +32,10 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 
     i=0
     while [ "$i" -lt 30 ]; do
-        if mariadb-admin \
-            --socket=/run/mysqld/mysqld.sock \
-            ping --silent
-        then
+        if mariadb-admin --socket=/run/mysqld/mysqld.sock ping --silent; then
             echo "MariaDB is ready."
             break
         fi
-
         i=$((i + 1))
         sleep 1
     done
@@ -56,12 +46,12 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     fi
 
     echo "Running bootstrap SQL..."
+    unset MYSQL_HOST
 
     mariadb \
         --protocol=SOCKET \
         --socket=/run/mysqld/mysqld.sock \
         -u root <<EOF
-
 ALTER USER 'root'@'localhost'
 IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 
@@ -75,7 +65,6 @@ ON \`${MYSQL_DATABASE}\`.*
 TO '${MYSQL_USER}'@'%';
 
 FLUSH PRIVILEGES;
-
 EOF
 
     echo "Bootstrap finished."
@@ -88,7 +77,6 @@ EOF
         shutdown
 
     wait "$DB_PID"
-
     echo "Temporary server stopped."
 else
     echo "Database already initialized."
@@ -99,4 +87,7 @@ echo "Starting MariaDB..."
 exec mariadbd \
     --user=mysql \
     --datadir=/var/lib/mysql \
+    --socket=/run/mysqld/mysqld.sock \
+    --bind-address=0.0.0.0 \
+    --port=3306 \
     --console
