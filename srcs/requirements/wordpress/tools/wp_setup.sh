@@ -47,11 +47,33 @@ cd /var/www/html
 
 if [ ! -f wp-config.php ]; then
     echo "Downloading WordPress..."
-
     wp core download --allow-root
+
+    echo "WP creation of wp-config.php..."
+    wp config create \
+    --dbname="$MYSQL_DATABASE" \
+    --dbuser="$MYSQL_USER" \
+    --dbpass="$DB_PASSWORD" \
+    --dbhost="$MYSQL_HOST" \
+    --allow-root
+    echo "WP installing core"
+    wp core install \
+    --url="$URL" \
+    --title="$WP_TITLE" \
+    --admin_user="$WP_ADMIN_USER" \
+    --admin_password="$WP_ADMIN_PASSWORD" \
+    --admin_email="$WP_ADMIN_EMAIL" \
+    --allow-root
+    wp user create \
+    "$WP_USER" \
+    "$WP_USER_EMAIL" \
+    --user_pass="$WP_USER_PASSWORD" \
+    --role=editor \
+    --allow-root
+
 fi
 
-
+chown -R nobody:nobody /var/www/html
 
 
 exec php-fpm84 -F

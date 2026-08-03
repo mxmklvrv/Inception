@@ -18,8 +18,15 @@ RUN apk update && apk add \
 
 RUN mkdir -p /var/www/html
 
+
+# there is no binary named php in Alpine, creating a symlink
+RUN ln -s /usr/bin/php84 /usr/bin/php
+
 COPY tools/wp_setup.sh /wp_setup.sh
+COPY conf/wp.cnf /etc/php84/php-fpm.d/wp.cnf
 
 RUN chmod +x /wp_setup.sh
+WORKDIR /var/www/html
+EXPOSE 9000
 
 ENTRYPOINT ["/wp_setup.sh"]
