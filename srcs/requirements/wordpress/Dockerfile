@@ -18,12 +18,18 @@ RUN apk update && apk add \
 
 RUN mkdir -p /var/www/html
 
+#WP-CLI is running out of PHP memory while extracting WordPress, so increased to 512
+RUN sed -i 's/^memory_limit = .*/memory_limit = 512M/' /etc/php84/php.ini
 
 # there is no binary named php in Alpine, creating a symlink
-RUN ln -s /usr/bin/php84 /usr/bin/php
+RUN ln -sf /usr/bin/php84 /usr/local/bin/php
 
 COPY tools/wp_setup.sh /wp_setup.sh
-COPY conf/wp.cnf /etc/php84/php-fpm.d/wp.cnf
+
+#removed the default pool and replace with handmade
+RUN rm -f /etc/php84/php-fpm.d/www.conf
+
+COPY conf/wp.conf /etc/php84/php-fpm.d/wp.conf
 
 RUN chmod +x /wp_setup.sh
 WORKDIR /var/www/html

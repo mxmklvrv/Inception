@@ -54,7 +54,7 @@ if [ ! -f wp-config.php ]; then
     --dbname="$MYSQL_DATABASE" \
     --dbuser="$MYSQL_USER" \
     --dbpass="$DB_PASSWORD" \
-    --dbhost="$MYSQL_HOST" \
+    --dbhost="${MYSQL_HOST}:3306" \
     --allow-root
     echo "WP installing core"
     wp core install \
@@ -75,5 +75,5 @@ fi
 
 chown -R nobody:nobody /var/www/html
 
-
+echo "Starting PHP-FPM..."
 exec php-fpm84 -F
