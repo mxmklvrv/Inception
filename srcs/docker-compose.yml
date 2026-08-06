@@ -54,6 +54,19 @@ services:
     networks:
       - inception
     restart: unless-stopped
+  nginx:
+    build: ./requirements/nginx
+    image: nginx:inception
+    container_name: nginx
+    depends_on:
+    - wordpress
+    ports:
+    - "443:443"
+    volumes:
+    - wordpress:/var/www/html:ro
+    networks:
+    - inception
+    restart: unless-stopped
 
 volumes:
   mariadb:
