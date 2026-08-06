@@ -34,7 +34,7 @@ clean:
 	$(COMPOSE) down -v --rmi local --remove-orphans
 
 fclean: clean
-	rm -rf $(DB_DATA)
-	rm -rf $(WP_DATA)
+	sudo rm -rf $(DB_DATA)
+	sudo rm -rf $(WP_DATA)
 
 re: fclean all
