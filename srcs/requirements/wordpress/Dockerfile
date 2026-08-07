@@ -1,6 +1,6 @@
 FROM alpine:3.22
 
-RUN apk update && apk add \
+RUN apk update && apk add --no-cache \
     php84 \
     php84-fpm \
     php84-mysqli \
@@ -25,6 +25,11 @@ RUN sed -i 's/^memory_limit = .*/memory_limit = 512M/' /etc/php84/php.ini
 RUN ln -sf /usr/bin/php84 /usr/local/bin/php
 
 COPY tools/wp_setup.sh /wp_setup.sh
+
+# install CLI 
+RUN curl -o /usr/local/bin/wp \
+    https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+ && chmod +x /usr/local/bin/wp
 
 #removed the default pool and replace with handmade
 RUN rm -f /etc/php84/php-fpm.d/www.conf

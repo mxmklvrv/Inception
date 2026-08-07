@@ -12,13 +12,6 @@ echo "Secrets loaded."
 
 mkdir -p /run/php
 
-#cli 
-if [ ! -f /usr/local/bin/wp ]; then
-    echo "Installing WP-CLI..."
-    curl -o /usr/local/bin/wp \
-        https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-    chmod +x /usr/local/bin/wp
-fi
 
 echo "Waiting for MariaDB..."
 
@@ -45,7 +38,7 @@ fi
 
 cd /var/www/html
 
-if [ ! -f wp-config.php ]; then
+if ! wp core is-installed --allow-root >/dev/null 2>&1; then
     echo "Downloading WordPress..."
     wp core download --allow-root
 
